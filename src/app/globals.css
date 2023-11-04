@@ -23,7 +23,7 @@
 body {
   background-color: #1A1A1A;
 }
-
+/*----------------------------------------Rounded Checkbox --------------------*/
 .round {
   position: relative;
 }
@@ -65,4 +65,4 @@ body {
 
 .round input[type="checkbox"]:checked + label:after {
   opacity: 1;
-} 
+}
