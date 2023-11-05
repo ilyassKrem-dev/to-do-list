@@ -16,6 +16,7 @@ export default function Input(props:any) {
     function addToList() {
         if (task.task !== "") {
             props.update(task.task)
+            task.task = ""
         } else {
             console.log("Empty")
         }

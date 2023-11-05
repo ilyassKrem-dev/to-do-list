@@ -15,15 +15,20 @@ interface Task {
 function Main() {
     const [num , setNum] = useState(1)
     const [tasks , setTasks] = useState<Task[]>([])
+    const [taskCreated , setTaskCreated] = useState(0)
+    const [taskCompleted , setTaskCompleted] = useState(0)
     function updateTasks(task:any) {
-        // Define your logic to update the tasks here
+        
         const taskAdd = {task:task,checked:false,id:nanoid()};
-        setTasks([...tasks, taskAdd]);
-        // Call setTasks with the updated tasks
+
+        const updatedTasks = [taskAdd, ...tasks];
+
+        setTasks(updatedTasks);
+        setTaskCreated(taskCreated+1)
     }
     useEffect(() => {
-        // This code will run whenever tasks state is updated
         console.log(tasks);
+        console.log(taskCompleted)
     }, [tasks]);
 
     
@@ -36,7 +41,10 @@ function Main() {
             }
             
         })
+        const completedCount = changeValue.filter((item) => item.checked === true).length;
         setTasks(changeValue)
+        setTaskCompleted(completedCount)
+        
     }
       const tasksElement = tasks.map((item,index) => {
             return <Tasks key={item.id} addTask={item} check={() => handleChange(item.id)} />
@@ -47,8 +55,8 @@ function Main() {
         <main className='h-screen w-screen flex flex-col  mx-auto  sm:max-w-3xl'>
             <Top />
             <Input update={updateTasks}/>     
-            <Numtask />
-            {num=== 0&&<Notask />}
+            <Numtask taskCreated={taskCreated} taskCompleted={taskCompleted}/>
+            {tasks.length === 0 &&<Notask />}
 
             {tasksElement}
         </main>
