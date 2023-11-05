@@ -13,10 +13,29 @@ interface Task {
     id: string;
   }
 function Main() {
-    const [num , setNum] = useState(1)
+    const isLocalStorageAvailable = typeof localStorage !== 'undefined';
+
     const [tasks , setTasks] = useState<Task[]>([])
     const [taskCreated , setTaskCreated] = useState(0)
     const [taskCompleted , setTaskCompleted] = useState(0)
+
+    useEffect(() => {
+        if (isLocalStorageAvailable) {
+            const storedTasks = localStorage.getItem('task');
+            const initialTasks = storedTasks ? JSON.parse(storedTasks) : [];
+    
+            const storedTasksCreated = localStorage.getItem('taskCreated');
+            const initialTasksCreated = storedTasksCreated ? JSON.parse(storedTasksCreated) : 0;
+    
+            const storedtaskCompleted = localStorage.getItem('taskCompleted');
+            const initialtaskCompleted = storedtaskCompleted ? JSON.parse(storedtaskCompleted) : 0;
+    
+            setTasks(initialTasks);
+            setTaskCreated(initialTasksCreated);
+            setTaskCompleted(initialtaskCompleted);
+        }
+    }, []);
+
     function updateTasks(task:any) {
         
         const taskAdd = {task:task,checked:false,id:nanoid()};
@@ -26,10 +45,12 @@ function Main() {
         setTasks(updatedTasks);
         setTaskCreated(taskCreated+1)
     }
+
     useEffect(() => {
-        console.log(tasks);
-        console.log(taskCompleted)
-    }, [tasks]);
+        localStorage.setItem("task" , JSON.stringify(tasks))
+        localStorage.setItem("taskCreated" , JSON.stringify(taskCreated))
+        localStorage.setItem("taskCompleted" , JSON.stringify(taskCompleted))
+    } , [tasks , taskCreated , taskCompleted])
 
     
     function handleChange(id:any) {
@@ -46,8 +67,24 @@ function Main() {
         setTaskCompleted(completedCount)
         
     }
-      const tasksElement = tasks.map((item,index) => {
-            return <Tasks key={item.id} addTask={item} check={() => handleChange(item.id)} />
+    
+    function removeTask(id:any) {
+        const removedList = tasks.filter(task => task.id !== id)
+        const removedTask = tasks.find((task) => task.id === id);
+        setTasks(removedList)
+        setTaskCreated(taskCreated-1)
+        let completedCount = taskCompleted;
+
+        if (removedTask && removedTask.checked) {
+            completedCount--; 
+        }
+
+        setTaskCompleted(completedCount);
+        
+        
+    }
+      const tasksElement = tasks.map((item) => {
+            return <Tasks key={item.id} addTask={item} check={() => handleChange(item.id)} remove={() =>removeTask(item.id)}/>
     })
     
     

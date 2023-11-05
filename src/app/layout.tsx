@@ -4,6 +4,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'To do',
+ 
 };
 
 export default function RootLayout({
